@@ -27,9 +27,25 @@ main = do
     rectangleRR       screen 181 230 439 260 15 (Pixel 0xFF0000FF)
     rectangleRR       screen 180 231 440 259 15 (Pixel 0xFF0000FF)
 
+    linedHLine screen 180 240 300 5 3 (Pixel 0xFF0000FF)
+
+    dottedHLine screen 180 240 330 5 3 (Pixel 0xFF0000FF)
+
     SDL.flip screen
 
     SDL.delay 10
+
+linedHLine surface x1 x2 y l1 l2 color =
+    mapM_ (\(x1',x2') -> hLine surface x1' x2' y color) sublines
+   where sublines = [ (x1 + x * segsep, x1 + x * segsep + l1)
+                    | let numSegments = (x2 - x1) `div` segsep
+                    , x <- [0..numSegments]
+                    ]
+         segsep   = l1 + l2
+
+dottedHLine surface x1 x2 y l1 l2 color=
+    mapM_ (\x -> pixel surface x y color) pixels
+   where pixels   = [ (x1 + x) | x <- [0..(x2 - x1 + 1)], odd x]
 
 rectangleRR surface x1 y1 x2 y2 rad pixel = do
     hLine surface (x1 + rad) (x2 - rad) y1 pixel
