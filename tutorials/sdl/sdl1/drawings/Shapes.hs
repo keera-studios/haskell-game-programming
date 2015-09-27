@@ -91,8 +91,9 @@ main = do
     texturedPolygon screen [(400, 500), (1000, 500), (1000, 700), (430, 680)] gioconda (0 + x `div` 2) 0
     writeIORef diffX ((x + 1) `mod` 600)
 
-    -- Beizer
-    --
+    -- Bezier
+    bezier screen [(100, 600), (150, 600), (170, 620), (150, 680), (170, 700)] 4 (Pixel 0xAA00AAFF)
+
     SDL.flip screen
 
     SDL.delay 10    
