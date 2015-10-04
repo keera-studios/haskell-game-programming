@@ -22,7 +22,6 @@ main = do
       cwiidSetRptMode wiimote 15
 
       -- t <- SDL.getTicks
-
       -- fpsCounter <- newIORef (0, t)
 
       -- "game" loop
