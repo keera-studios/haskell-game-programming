@@ -56,6 +56,8 @@ main = do
           let x = fromIntegral $ cwiidIRSrcPosX ir
               y = fromIntegral $ cwiidIRSrcPosY ir
           circle screen x y 30 (Pixel 0x0000FFFF)    
+
+        SDL.flip screen
  
 width = 1024
 height = 768

@@ -59,7 +59,9 @@ main = do
               -- Type transformation Int -> Int16
           let x = round finX
               y = round finY
-          circle screen x y 30 (Pixel 0x0000FFFF)    
+          filledCircle screen x y 30 color
+
+        SDL.flip screen
  
 width :: Num a => a
 width = 1024
