@@ -3,6 +3,7 @@ import Control.Monad
 import Graphics.UI.SDL as SDL
 import Graphics.UI.SDL.Primitives as SDL
 import System.CWiid
+import Data.IORef
 
 main :: IO ()
 main = do
@@ -18,6 +19,8 @@ main = do
       putStrLn "Connected"
 
       -- NEW
+      t <- SDL.getTicks
+      fpsCounter <- newIORef (0, t)
 
       -- Enable different sensors (15 = 1 + 2 + 4 + 8):
       -- 1 for status, 2 for buttons, 4 for accelerometers, and 8 for IR.
@@ -52,6 +55,18 @@ main = do
         let format = surfaceGetPixelFormat screen
         white <- mapRGB format 255 255 255
         fillRect screen Nothing white
+
+        t' <- SDL.getTicks
+        (n,t) <- readIORef fpsCounter
+        let td  = t' - t
+        let tpf = fromIntegral td / fromIntegral n / 1000
+
+        if td > 1000
+          then do putStrLn $ "Time per frame (in seconds): " ++ show tpf
+                  putStrLn $ "FPS: " ++ show (1.0 / tpf)
+                  writeIORef fpsCounter (0, t')
+          else writeIORef fpsCounter (n + 1, t)
+
 
         when (length irs > 1) $ void $ do
           let color = if isClick then Pixel 0xFF0000FF
