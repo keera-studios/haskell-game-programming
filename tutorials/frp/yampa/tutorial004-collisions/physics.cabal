@@ -1,0 +1,53 @@
+name: physics
+version: 0.0.1
+cabal-version: >=1.8
+build-type: Simple
+license: BSD3
+license-file: LICENSE
+maintainer: ivan.perez@keera.co.uk
+homepage: http://github.com/keera-studios/haskell-frp-yampa-physics
+synopsis: Physics Simulation in FRP
+category: Game
+author: Ivan Perez
+data-files: data/*.ttf
+ 
+executable physics
+    build-depends: base >=4.6 && <5,
+                   bytestring,
+                   containers -any,
+                   IfElse -any,
+                   mtl -any,
+                   transformers >=0.3 && <0.5,
+                   Yampa >=0.9.6 && <0.11,
+
+                   SDL -any,
+                   SDL-gfx -any,
+                   SDL-ttf -any
+
+    main-is: Main.hs
+    hs-source-dirs: src/
+    other-modules:
+                   -- Game specific
+                   Constants
+                   Debug
+                   Display
+                   Game
+                   GameState
+                   Input
+                   Objects
+                   ObjectSF
+                   Resources
+
+                   -- General modules
+                   Control.Extra.Monad
+                   Data.Extra.Num
+                   Data.Extra.VectorSpace
+                   Data.IdentityList
+                   Graphics.UI.Extra.SDL
+                   Physics.TwoDimensions.Collisions
+                   Physics.TwoDimensions.Dimensions
+                   Physics.TwoDimensions.GameCollisions
+                   Physics.TwoDimensions.PhysicalObjects
+                   Physics.TwoDimensions.Shapes
+
+    ghc-options: -Wall -threaded
