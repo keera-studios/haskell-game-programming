@@ -4,11 +4,6 @@ import FRP.Yampa                  as Yampa
 import Graphics.UI.SDL            as SDL
 import Graphics.UI.SDL.Primitives as SDL
 
-width :: Num a => a
-width  = 640
-height :: Num a => a
-height = 480
-
 main = do
   -- Initialise SDL
   SDL.init [InitVideo]
@@ -27,8 +22,8 @@ main = do
 inCircles :: SF (Double, Double) (Double, Double)
 inCircles = proc (centerX, centerY) -> do
   t <- time -< ()
-  let x = centerX + cos t * radius
-      y = centerY + sin t * radius
+  let x      = centerX + cos t * radius
+      y      = centerY + sin t * radius
       radius = 30
   returnA -< (x,y)
 
@@ -77,3 +72,9 @@ yampaSDLTimeSense timeRef = do
   dt <- updateTime timeRef newTime
   let dtSecs = fromIntegral dt / 1000
   return dtSecs
+
+width :: Num a => a
+width  = 640
+
+height :: Num a => a
+height = 480
