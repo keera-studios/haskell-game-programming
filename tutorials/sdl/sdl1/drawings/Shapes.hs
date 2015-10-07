@@ -9,7 +9,7 @@ main :: IO ()
 main = do
   SDL.init [InitVideo]
 
-  gioconda <- SDL.load "tutorials/sdl/sdl1/drawings/gioconda.jpg"
+  gioconda <- SDL.load "assets/sdl/sdl1/drawings/gioconda.jpg"
 
   screen <- SDL.setVideoMode 1024 768 32 [SWSurface]
   let format = SDL.surfaceGetPixelFormat screen
