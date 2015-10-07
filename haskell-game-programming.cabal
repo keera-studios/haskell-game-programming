@@ -16,7 +16,7 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
-executable raindrops
+executable example-raindrops
   main-is:             Raindrops.hs
   -- other-modules:       
   hs-source-dirs:      examples/raindrops/
@@ -30,6 +30,22 @@ executable raindrops
                        hcwiid,
                        SDL-mixer,
                        SDL-image,
+                       SDL-ttf
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable example-flappybird
+  main-is:             FlappyBird.hs
+  -- other-modules:       
+  hs-source-dirs:      examples/FlappyBird/ examples/ libraries
+  -- other-extensions:    Arrows, FlexibleInstances, MultiParamTypeClasses,
+  --                      TypeSynonymInstances, FlexibleContexts,
+  --                      FunctionalDependencies, MultiWayIf
+  build-depends:       base,
+                       containers,
+                       random,
+                       Yampa,
+                       SDL,
                        SDL-ttf
   -- hs-source-dirs:      
   default-language:    Haskell2010
@@ -199,3 +215,4 @@ executable sdl-sdl1-time-example3
                        SDL-gfx
   -- hs-source-dirs:      
   default-language:    Haskell2010
+
