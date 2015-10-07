@@ -136,3 +136,12 @@ executable sdl-sdl1-drawing-sophistishapes
                        SDL-gfx
   -- hs-source-dirs:      
   default-language:    Haskell2010
+
+executable sdl-sdl1-graphics-example2
+  main-is:             example2.hs
+  hs-source-dirs:      tutorials/sdl/sdl1/graphics/
+  build-depends:       base,
+                       SDL,
+                       SDL-image
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
