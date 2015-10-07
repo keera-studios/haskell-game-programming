@@ -34,12 +34,96 @@ executable raindrops
   -- hs-source-dirs:      
   default-language:    Haskell2010
 
-executable animation
+executable animation-frames
   main-is:             Main.hs
   hs-source-dirs:      tutorials/gameconcepts/multimedia/animation/
   build-depends:       base,
                        containers,
                        SDL,
                        SDL-image
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable kinect-pointer
+  main-is:             Main.hs
+  hs-source-dirs:      tutorials/hardware/kinect/
+  build-depends:       base,
+                       containers,
+                       freenect,
+                       vector,
+                       SDL,
+                       SDL-gfx
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable wiimote-connect
+  main-is:             Connect.hs
+  hs-source-dirs:      tutorials/hardware/wiimote/tutorial1/
+  build-depends:       base,
+                       containers,
+                       hcwiid,
+                       SDL,
+                       SDL-gfx
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable wiimote-buttons
+  main-is:             Buttons.hs
+  hs-source-dirs:      tutorials/hardware/wiimote/tutorial2-buttons/
+  build-depends:       base,
+                       containers,
+                       hcwiid,
+                       SDL,
+                       SDL-gfx
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable wiimote-ir-leds
+  main-is:             Leds.hs
+  hs-source-dirs:      tutorials/hardware/wiimote/tutorial3-infrared/
+  build-depends:       base,
+                       hcwiid,
+                       SDL,
+                       SDL-gfx
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable wiimote-ir-leds-solution
+  main-is:             Leds-Solution.hs
+  hs-source-dirs:      tutorials/hardware/wiimote/tutorial3-infrared/
+  build-depends:       base,
+                       hcwiid,
+                       SDL,
+                       SDL-gfx
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable wiimote-ir-point
+  main-is:             Point.hs
+  hs-source-dirs:      tutorials/hardware/wiimote/tutorial3-infrared/
+  build-depends:       base,
+                       hcwiid,
+                       SDL,
+                       SDL-gfx
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable sdl-sdl1-drawing-shapes
+  main-is:             Shapes.hs
+  hs-source-dirs:      tutorials/sdl/sdl1/drawings/
+  build-depends:       base,
+                       SDL,
+                       SDL-image,
+                       SDL-gfx
+  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable sdl-sdl1-drawing-sophistishapes
+  main-is:             SophistiShapes.hs
+  hs-source-dirs:      tutorials/sdl/sdl1/drawings/
+  build-depends:       base,
+                       SDL,
+                       SDL-image,
+                       SDL-gfx
   -- hs-source-dirs:      
   default-language:    Haskell2010
