@@ -15,7 +15,7 @@ main = do
   return ()
 
 playFile = void $ forkOS $ do
-  wave <- SDL.Mixer.Samples.loadWAV "file.wav"
+  wave <- SDL.Mixer.Samples.loadWAV "assets/sdl/sdl1/audio/file.wav"
   v    <- SDL.Mixer.Channels.playChannel (-1) wave 0
   threadDelay 1000000
   touchForeignPtr wave
