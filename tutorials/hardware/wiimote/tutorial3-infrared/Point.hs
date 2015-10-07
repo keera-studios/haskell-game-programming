@@ -42,7 +42,7 @@ main = do
         
         -- Calculate proportional coordinates
         let propX = fromIntegral (1024 - posX) / 1024.0
-            propY = fromIntegral (max 0 (posY - 384)) / 384.0
+            propY = fromIntegral (posY - 384) / 384.0
         
         -- Calculate game area coordinates
         let finX  = width  * propX

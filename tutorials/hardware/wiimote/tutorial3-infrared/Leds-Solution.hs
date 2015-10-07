@@ -40,6 +40,8 @@ main = do
                           else (Pixel 0xFF00FFFF)
           filledCircle screen x y sz color
 
+        print $ map cwiidIRSrcPosY irs
+
         SDL.flip screen
  
 width = 1024
