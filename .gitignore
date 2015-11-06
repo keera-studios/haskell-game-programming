@@ -15,3 +15,7 @@ cabal.sandbox.config
 *.hp
 .stack-work/
 Main
+!examples/*.*
+examples/*
+!tutorials/*.*
+tutorials/*
