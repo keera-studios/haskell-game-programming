@@ -57,12 +57,12 @@ main = do
 
     -- Load with a mask
     drop   <- load "data/cherry.png"
-    t <- mapRGB (surfaceGetPixelFormat drop) 0 255 0 
+    t <- mapRGB (surfaceGetPixelFormat drop) 0 255 0
     setColorKey drop [SrcColorKey, RLEAccel] t
 
     -- Load with a mask
     paddle <- load "data/player.png"
-    t <- mapRGB (surfaceGetPixelFormat paddle) 0 255 0 
+    t <- mapRGB (surfaceGetPixelFormat paddle) 0 255 0
     setColorKey paddle [SrcColorKey, RLEAccel] t
 
     -- Create window, no mouse
@@ -135,7 +135,7 @@ moveForward dt gs = gs { raindrops = movedRaindrops }
 raindropsPaddle :: GameState -> GameState
 raindropsPaddle gs = gs { raindrops = remainingRaindrops
                         , points    = points gs + pts
-                        } 
+                        }
  where remainingRaindrops       = filter (not.collidesWithPaddle) (raindrops gs)
        pts                      = length (raindrops gs) - length remainingRaindrops
        collidesWithPaddle (x,y) = (within x paddleXMin paddleXMax
