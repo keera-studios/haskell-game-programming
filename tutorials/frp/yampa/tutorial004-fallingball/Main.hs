@@ -1,12 +1,8 @@
+{-# LANGUAGE Arrows #-}
 import Data.IORef
 import FRP.Yampa                  as Yampa
 import Graphics.UI.SDL            as SDL
 import Graphics.UI.SDL.Primitives as SDL
-
-width :: Num a => a
-width  = 640
-height :: Num a => a
-height = 480
 
 main = do
   -- Initialise SDL
@@ -40,8 +36,12 @@ display (x, y) = do
   -- Double buffering
   SDL.flip screen
 
+-- falling = constant 50.8 >>> integral >>> integral >>> arr (\y -> (320, y))
 falling :: SF () (Double, Double)
-falling = constant 9.8 >>> integral >>> integral >>> arr (\y -> (320, y))
+falling = proc () -> do
+  v <- integral -< 50.8
+  p <- integral -< v
+  returnA -< (320, p)
 
 -- | Updates the time in an IO Ref and returns the time difference
 updateTime :: IORef Int -> Int -> IO Int
@@ -57,5 +57,10 @@ yampaSDLTimeSense timeRef = do
 
   -- Obtain time difference
   dt <- updateTime timeRef newTime
-  let dtSecs = fromIntegral dt / 200
+  let dtSecs = fromIntegral dt / 1000
   return dtSecs
+
+width :: Num a => a
+width  = 640
+height :: Num a => a
+height = 480
