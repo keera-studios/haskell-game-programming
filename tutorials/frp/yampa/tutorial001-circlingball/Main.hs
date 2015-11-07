@@ -41,11 +41,19 @@ display (x, y) = do
   SDL.flip screen
 
 inCircles :: SF () (Double, Double)
-inCircles = localTime >>>
+inCircles = time >>>
   (arr $ \time -> ( width  / 2 + cos time * radius
                   , height / 2 + sin time * radius)
   )
  where radius = 30
+
+-- inCircles :: SF () (Double, Double)
+-- inCircles = proc () -> do
+--   t <- time -< ()
+--   let x = width  / 2 + cos time * radius
+--       y = height / 2 + sin time * radius
+--       radius = 30
+--   returnA -< (x,y)
 
 -- | Updates the time in an IO Ref and returns the time difference
 updateTime :: IORef Int -> Int -> IO Int
