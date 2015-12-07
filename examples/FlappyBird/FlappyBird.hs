@@ -159,19 +159,19 @@ instance Sink MySDLRenderer (Int, ([Int],[Int])) IO where
     let format = surfaceGetPixelFormat screen
 
     -- Background
-    green <- mapRGB format 13 60 85
-    _     <- fillRect screen Nothing green
+    bgColor <- mapRGB format 13 60 85
+    _       <- fillRect screen Nothing bgColor
 
     -- Paint bars
-    red <- mapRGB format 241 108 32
-    let paintTopBar (x,h) = fillRect screen (Just (Rect x (height - h) 1 h)) red
-        paintBotBar (x,h) = fillRect screen (Just (Rect x 0            1 h)) red
+    barColor <- mapRGB format 241 108 32
+    let paintTopBar (x,h) = fillRect screen (Just (Rect x (height - h) 1 h)) barColor
+        paintBotBar (x,h) = fillRect screen (Just (Rect x 0            1 h)) barColor
     mapM_ paintBotBar (zip [0 .. width-1] ceilingHeights)
     mapM_ paintTopBar (zip [0 .. width-1] floorHeights)
 
     -- Paint player
-    blue <- mapRGB format 19 149 186
-    _    <- fillRect screen (Just $ Rect playerX playerY playerWidth playerHeight) blue
+    playerColor <- mapRGB format 19 149 186
+    _ <- fillRect screen (Just $ Rect playerX playerY playerWidth playerHeight) playerColor
 
     SDL.flip screen
 
