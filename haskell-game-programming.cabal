@@ -46,6 +46,7 @@ executable example-flappybird
                        containers,
                        random,
                        Yampa,
+                       yampa-signals,
                        SDL,
                        SDL-ttf
   -- hs-source-dirs:      

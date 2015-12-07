@@ -7,6 +7,7 @@ import Control.Monad
 import Control.Extra.Monad
 import Data.IORef
 import FRP.Yampa                  as Yampa
+import FRP.Yampa.Signal           as Yampa
 import FRP.Yampa.Extensions       as Yampa
 import FRP.Yampa.Backends.SDL     as Yampa
 import FRP.Yampa.Reactimator      as Yampa
@@ -129,7 +130,7 @@ handleEvent :: Controller -> SDL.Event -> Controller
 handleEvent c e =
   case e of
     MouseButtonDown _ _ ButtonLeft           -> c { controllerClick = True }
-    MouseButtonUp   _ _ ButtonLeft           -> c { controllerClick = False} 
+    MouseButtonUp   _ _ ButtonLeft           -> c { controllerClick = False}
     KeyDown (Keysym { symKey = SDLK_SPACE }) -> c { controllerClick = True  }
     KeyUp (Keysym { symKey = SDLK_SPACE })   -> c { controllerClick = False }
     _                                        -> c
@@ -158,18 +159,18 @@ instance Sink MySDLRenderer (Int, ([Int],[Int])) IO where
     let format = surfaceGetPixelFormat screen
 
     -- Background
-    green <- mapRGB format 0 0xFF 0
+    green <- mapRGB format 13 60 85
     _     <- fillRect screen Nothing green
 
     -- Paint bars
-    red <- mapRGB format 0xFF 0 0
+    red <- mapRGB format 241 108 32
     let paintTopBar (x,h) = fillRect screen (Just (Rect x (height - h) 1 h)) red
         paintBotBar (x,h) = fillRect screen (Just (Rect x 0            1 h)) red
     mapM_ paintBotBar (zip [0 .. width-1] ceilingHeights)
     mapM_ paintTopBar (zip [0 .. width-1] floorHeights)
 
     -- Paint player
-    blue <- mapRGB format 0 0 0xFF
+    blue <- mapRGB format 19 149 186
     _    <- fillRect screen (Just $ Rect playerX playerY playerWidth playerHeight) blue
 
     SDL.flip screen
@@ -184,13 +185,13 @@ height = 480
 
 bpp :: Num a => a
 bpp = 16
-       
+
 -- Settings
 maxBarSize :: Num a => a
 maxBarSize = 200
 
 -- barSep :: Num a => a
-barSep = 20 
+barSep = 20
 
 barWidth :: Num a => a
 barWidth = 5
