@@ -7,7 +7,6 @@ pointers to books, code, existing projects, companies, etc.
 To read the documentation, head to our [wiki](http://github.com/keera-studios/haskell-game-programming/wiki)
 or select a section below:
 
-* [Introduction](http://github.com/keera-studios/haskell-game-programming/wiki/Introduction)
 * [Documentation](http://github.com/keera-studios/haskell-game-programming/wiki/Documentation)
 * [Examples](http://github.com/keera-studios/haskell-game-programming/wiki/Examples)
 * [Games](http://github.com/keera-studios/haskell-game-programming/wiki/Games)
