@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Game Programming in Haskell - First steps</title>
+
+        <meta name="description" content="Links and directions using Haskell for Game Programming">
+        <meta name="author" content="Ivan Perez">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement( 'link' );
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = 'css/print/pdf.css';
+                document.getElementsByTagName( 'head' )[0].appendChild( link );
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                  <h2>Game and Multimedia in Haskell <br />@ Keera Studios</h2>
+                    <img src="midsize-logo-whitebg.png" width="30%" />
+                    <p>
+                    <small>Created by <a href="http://facebook.com/keerastudios">Ivan Perez</a></small><br />
+                      <small><a href="http://facebook.com/keerastudios">http://facebook.com/keerastudios</a> / <a href="http://twitter.com/KeeraStudios">@KeeraStudios</a></small>
+                    </p>
+                </section>
+
+                <!-- section>
+                 <section>
+                    <h2>Haskell is to the Game Programming industry what Matlab is to...</h2>
+                    <iframe width="420" height="315" src="http://www.youtube.com/embed/iP2BNsAUyY4?rel=0&modestbranding=1&start=18" frameborder="0" allowfullscreen volume="0"></iframe>
+                    <video controls src="nario.mp4"></video>
+                    </section>
+                </section -->
+
+                <section>
+                 <section>
+                   <h2>Three subtopics:</h2>
+                   <ul>
+                     <li>Reactivity</li>
+                     <li>FRP and Games</li>
+                     <li>Haskell @ Keera Studios</li>
+                   </ul>
+                 </section>
+                </section>
+                <section>
+                  <section>
+                    <h2>Reactivity</h2>
+<pre><code data-trim contenteditable>
+-- Values depend on other values!
+let x = 0
+let y = 84 - x
+let x = 7
+print y      -- Will be 84, but we want it to be 77
+                    </code></pre>
+                    <p>We want to say that y depends on the value of x <b>over time!</b></p>
+                    <img src="openofficecalc.png" width="50%" >
+                  </section>
+                  <section>
+                    <h2>Reactivity</h2>
+<pre><code data-trim contenteditable>
+
+type ChangingValue a = ... -- Some really cool definition
+newValue :: Monad m => a -> m (ChangingValue ())
+setValue :: Monad m => ChangingValue a -> a -> m ()
+getValue :: Monad m => ChangingValue a -> m a
+onValue  :: Monad m => (a -> b) -> ChangingValue a -> m (ChangingValue b)
+
+main = do
+  -- x :: ChangingValue Int
+  x <- newValue 0
+
+  -- y :: ChangingValue Int
+  y <- onValue (\x' -> 84 - x') x
+
+  setValue x 7
+
+  print y -- Now it's 77!
+                    </code></pre>
+                  </section>
+                  <section>
+                    <ul>
+                      <li>Reactivity is about dependencies!</li>
+                      <li>There is a syntactic overhead. What if we write (\a -> (a,a)) x?<br /><small>(is the type ChangingValue (Int, Int) or (ChangingValue Int, ChangingValue Int)</small></li>
+                      <li>When should y actually be updated?</li>
+                      <li>What happens if x also depends on y?</li>
+                      <li>How to stop applying a transformation?</li>
+                      <li>What if we want to remember the previous value?</li>
+                    </ul>
+                  </section>
+                </section>
+                <section>
+                  <section>
+                    <h2>FRP</h2>
+                    <ul>
+                      <li>It's about time: FRP = Functional TEMPORAL Programming!</li>
+                      <li>FRP != RP and FRP != F, RP</li>
+                      <li>Values that change over time are called Signals<br />(or Behaviors and Events)</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <pre><code data-trim contenteditable>
+type Animation = Time -> Picture
+type Wave      = Time -> Frequency
+mousePosition :: Time -> (Int, Int)
+
+-- or
+
+type Time      = Reals -- not actual Haskell
+type Signal a  = Time -> a
+
+-- and then
+
+type Animation = Signal Picture
+type Wave      = Signal Frequency
+mousePosition :: Signal (Int, Int)
+                    </code></pre>
+                  </section>
+                  <section>
+                    <pre><code data-trim contenteditable>
+rotatingBall :: Time -> Picture
+rotatingBall time = translate redBall (x,y)
+ where (x, y) = (radius * cos angle, radius * sin angle)
+
+       angle  = time * speed -- time will change over... time!
+
+       -- Config settings
+       speed     = 10
+       radius    = 20 -- pixels
+
+       redBall   = ... -- :: Picture
+       translate = ... -- :: Picture -> Picture
+                    </code></pre>
+                    <img src="ballincircles.gif" width="50%" >
+                  </section>
+                  <section>
+                    <pre><code data-trim contenteditable>
+ballAroundMousePos :: Signal Picture
+ballAroundMousePos time = translate redBall (x,y)
+ where (mX, mY) = mousePos time
+
+       x        = mX + radius * cos time
+       y        = mY + radius * sin time
+
+       -- Config settings
+       ...
+                    </code></pre>
+                    <img src="ballaroundmouse.gif" width="50%" >
+                  </section>
+                  <section>
+                    <h2>But what happens if we write...</h2>
+                    <pre><code data-trim contenteditable>
+mousePos (time - 3)
+
+mousePosition (time + 3)
+
+dollar2GBPExchangeRate (time + year 1)
+                    </code></pre>
+                    <small>The first one gives you a leak, the other two would either stall or fail.</small>
+                  </section>
+                  <section>
+                    <h2>Referential transparency</h2>
+                    <ul>
+                      <li>Within an execution: everyone sees the same value for a signal
+                        <i>within one time/execution step</i></li>
+                      <li>Across simulations: if I sample a reactive system at
+                        the same time <i>and run that program again</i>, I get the
+                        same thing.</li>
+                      </ul>
+                      <br />
+                      <br />
+                      Careful with Monads and IO! Signals like mousePosition hide a monadic action.
+                  </section>
+                 <section>
+                   <h2>Yampa</h2>
+                   <ul>
+                     <li>You can only transform input signals into output signals</li>
+                     <li>All plumbing (IO) is done externally.</li>
+                   </ul>
+                    <pre><code data-trim contenteditable>
+ballAroundMousePos :: SF (Double, Double) (Double, Double)
+ballAroundMousePos = proc (mouseX, mouseY) -> do
+  t <- time -< () -- time producing SF does not really depend on anything
+
+  -- Displacement
+  let dx = radius * cos t
+      dy = radius * sin t
+
+  returnA -< (mouseX + dx, mouseY + dy)
+
+main = reactimate sense render ballAroundMousePos
+  where
+    sense = do p <- pollMousePos
+               t <- pollClock
+               return (t, p)
+
+    render (x,y) = paintAt (x,y) redBall
+                    </code></pre>
+                   <!-- Main starting point: <a href="http://bit.ly/20KZMv0">bit.ly/20KZMv0 (github)</a> -->
+                 </section>
+                 <section>
+                   <h2>Yampa (2)</h2>
+                   <ul>
+                     <li>SFs can "remember" the past</li>
+                   </ul>
+                    <pre><code data-trim contenteditable>
+-- Part of Yampa library
+loopPre :: c -> SF (a, c) (b, c) -> SF a b
+
+-- We can write
+lastValue = 0 (proc (new, last) -> (last, new)
+
+-- Also:
+
+integral   :: Floating a => SF a a
+derivative :: Floating a => SF a a
+                    </code></pre>
+                    <img src="loopPre.png" width="50%" >
+                   <!-- Main starting point: <a href="http://bit.ly/20KZMv0">bit.ly/20KZMv0 (github)</a> -->
+                 </section>
+                 <section>
+                   <h3>Current Research Problems (at University of Nottingham)</h3>
+                   <ul>
+                     <li>Extending SFs with monads for <i>controlled effects</i>.</li>
+                     <li>Passing value differences along with absolute values.</li>
+                     <li>Testing in FRP.</li>
+                   </ul>
+                 </section>
+                 <section>
+                   <h3>Monadic Arrowized FRP</h3>
+                   <ul>
+                     <li>Time: Reader monad with the time in the environment.</li>
+                     <li>Discrete and continuous FRP.</li>
+                     <li>Termination: Maybe monad.</li>
+                     <li>Multiple times: list monad.</li>
+                     <li>Perfect collisions: (NextTimeToLookAt, a) monad.</li>
+                   </ul>
+                   <br />
+                   <br />
+                   <br />
+                   <center>(paper coming your way)</center>
+                 </section>
+                 <section>
+                   <h3>Testing</h3>
+                   <br />
+                   <ul>
+                     <li>You can connect Yampa with Quickcheck.</li>
+                     <li>Same sampling times and same inputs</a>: exact same output.<br />
+                           (also on different machines, if arithmetic is the same)</li>
+                      <li>Temporal Predicate = Signal Bool</li>
+                      <li>We are proving game properties, and quickcheck finds bugs for us</li>
+                      <li>Games produce traces that we can run offline, on different phones</li>
+                   </ul>
+                   <br />
+                   <br />
+                   <br />
+                   <center>(paper coming your way)</center>
+                 </section>
+                </section>
+                 <!--section>
+                    <h2>We (haskellers) only have one truly complete game: Nikki and the Robots</h2>
+                    <img src="nikki.png" width="50%" >
+                 </section-->
+                <section>
+                   <h2>Haskell @ Keera Studios</h2>
+                </section>
+                <section>
+                 <section>
+                   <a href="https://github.com/keera-studios/keera-hails/tree/master/keera-hails-reactivevalues">Reactive Values</a>
+                   <p>F; RP</p>
+                 </section>
+                 <section>
+                   <h2>A Game IDE using Reactive Values </h2>
+                   <p>Gale IDE: ~10K locs; (engine: 2K locs) <small>(<a href="https://www.youtube.com/watch?v=dKBFJa9N3zY">altlink</a>)</small></p>
+                     <video controls src="galeide.ogv"></video>
+                     <small>(focus on static analysis, portability)</small>
+                 </section>
+                 <section>
+                   <h2>Functional Reactive Programming</h2>
+                   <a href="https://github.com/keera-studios/haskell-game-programming/wiki/Functional-Reactive-Programming">Guide</a>
+                 </section>
+                 <section>
+                    <h2>FRP Games: A sample game</h2>
+                    <video controls src="Breakout.ogv"></video>
+                    <p>Also: super pang</p>
+                 </section>
+                 <section>
+                    <ul>
+                        <li>SDL2</li>
+                        <li>Wiimote: Yes (35 locs) </li>
+                        <li>Kinect: Yes (80 locs, including img recog)</li>
+                        <li>Android: Yes (20 locs)
+                        <li>iOS: Coming
+                        <li><p>Performance: Android, 60FPS (screen refresh rate); Desktop, over 700 FPS</p>
+                        <li>Total: 1K locs; simple version on <a href="http://github.com/ivanperez-keera/haskanoid">http://github.com/ivanperez-keera/haskanoid</a></li>
+                        <li>Runs on  browser too: <a href="http://ivanperez-keera.github.io/haskanoid/haskanoid.jsexe/index.html">http://ivanperez-keera.github.io/haskanoid/haskanoid.jsexe/index.html</a></li>
+                    </ul>
+                 </section>
+                </section>
+                <section>
+                 <section>
+                    <h2>You could write the next Haskell game</h2>
+                    <p>Between 100-400 locs: <a href="http://keera.co.uk/blog/2013/03/19/creating-board-games-in-haskell/">http://keera.co.uk/blog/2013/19/19/creating-board-games-in-haskell/</a></p>
+                    <img src="cookie.png" width="50%" /><br />
+                    <a href="https://play.google.com/store/apps/details?id=uk.co.keera.games.magiccookies&hl=en">Magic Cookies! on Google Play for Android</a>
+                 </section>
+                 <section>
+                     <ul>
+                       <li>Gale Engine: 2K locs</li>
+                    <li>All about design (programming =~ 20%-30% of time/budget in games.)</li>
+                     </ul>
+                 </section>
+                 <section>
+                    <iframe width="420" height="315" src="http://www.youtube.com/embed/-Owi3rHAFrM?rel=0&modestbranding=1&start=5" frameborder="0" allowfullscreen volume="0"></iframe>
+                 </section>
+                </section>
+                <section>
+                  <h2>What makes a game successful: Obviously, it has to be 3D</h2>
+                  <p>Ahem</p>
+                  <iframe width="420" height="315" src="http://www.youtube.com/embed/serWSUNs23U?rel=0&modestbranding=1&start=60" frameborder="0" allowfullscreen volume="0"></iframe>
+                </section>
+
+                <section>
+                 <section>
+                     <h2>What makes a game successful: The graphics!</h2>
+                     <p>Ehhhhmmm, not really</p>
+                     <iframe width="420" height="315" src="http://www.youtube.com/embed/sf06P-_1lkU?rel=0&modestbranding=1" frameborder="0" allowfullscreen volume="0"></iframe>
+                 </section>
+
+                 <section>
+                     <h2>Compare with Nikki and the Robots</h2>
+                     <iframe width="420" height="315" src="http://www.youtube.com/embed/s7cXLfb-HHw?rel=0&modestbranding=1" frameborder="0" allowfullscreen volume="0"></iframe>
+                 </section>
+                </section>
+
+                <section>
+                    <h2>What makes a game successful: adding new elements all the time</h2>
+                    <small>(you know, to spice things up a bit and keep it interesting)</small>
+                    <p>Ehhhhmmm, not really</p>
+                    <iframe width="420" height="315" src="http://www.youtube.com/embed/uFfeV5leVmI?rel=0&modestbranding=1&start=10" frameborder="0" allowfullscreen></iframe>
+                </section>
+
+                <section>
+                    <h2>What makes a game successful: Complex, novel gameplay!</h2>
+                    <p>Sure</p>
+                    <iframe width="420" height="315" src="http://www.youtube.com/embed/NNBsl9dQxeM?rel=0&modestbranding=1" frameborder="0" allowfullscreen volume="0"></iframe>
+                </section>
+
+                <section>
+                    <h2>What the FAQ</h2>
+                    <ul>
+                       <li>Is Haskell really ready for game programming?</li>
+                       <li>What kinds of games can you (or I) create in Haskell?</li>
+                       <li>How long could it take me to write my first game?</li>
+                       <li>How do I do graphics in haskell?</li>
+                       <li>How do I go get started?</li>
+                    </ul>
+                </section>
+
+                <section>
+                 <section>
+                    <h3>Thank you!</h3>
+                    <img src="midsize-logo-whitebg.png" width="30%" />
+                    <h3>(Find me afterwards if you want to see this in action)</h3>
+                    <small><a href="http://keera.co.uk">Ivan Perez</a> / <a href="http://twitter.com/KeeraStudios">@KeeraStudios</a> / <a href="http://facebook.com/keerastudios">facebook.com/keerastudios</a></small>
+                 </section>
+                </section>
+<!--
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Markdown support
+
+                        For those of you who like that sort of thing. Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
+
+                        ```
+                        <section data-markdown>
+                          ## Markdown support
+
+                          For those of you who like that sort of thing.
+                          Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
+                        </section>
+                        ```
+                    </script>
+                </section>
+
+                <section id="transitions">
+                    <h2>Transition Styles</h2>
+                    <p>
+                        You can select from different transitions, like: <br>
+                        <a href="?transition=cube#/transitions">Cube</a> -
+                        <a href="?transition=page#/transitions">Page</a> -
+                        <a href="?transition=concave#/transitions">Concave</a> -
+                        <a href="?transition=zoom#/transitions">Zoom</a> -
+                        <a href="?transition=linear#/transitions">Linear</a> -
+                        <a href="?transition=fade#/transitions">Fade</a> -
+                        <a href="?transition=none#/transitions">None</a> -
+                        <a href="?#/transitions">Default</a>
+                    </p>
+                </section>
+
+                <section id="themes">
+                    <h2>Themes</h2>
+                    <p>
+                        Reveal.js comes with a few themes built in: <br>
+                        <a href="?#/themes">Default</a> -
+                        <a href="?theme=sky#/themes">Sky</a> -
+                        <a href="?theme=beige#/themes">Beige</a> -
+                        <a href="?theme=simple#/themes">Simple</a> -
+                        <a href="?theme=serif#/themes">Serif</a> -
+                        <a href="?theme=night#/themes">Night</a> <br>
+                        <a href="?theme=moon#/themes">Moon</a> -
+                        <a href="?theme=solarized#/themes">Solarized</a>
+                    </p>
+                    <p>
+                        <small>
+                            * Theme demos are loaded after the presentation which leads to flicker. In production you should load your theme in the <code>&lt;head&gt;</code> using a <code>&lt;link&gt;</code>.
+                        </small>
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Global State</h2>
+                    <p>
+                        Set <code>data-state="something"</code> on a slide and <code>"something"</code>
+                        will be added as a class to the document element when the slide is open. This lets you
+                        apply broader style changes, like switching the background.
+                    </p>
+                </section>
+
+                <section data-state="customevent">
+                    <h2>Custom Events</h2>
+                    <p>
+                        Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
+                    </p>
+                    <pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
+Reveal.addEventListener( 'customevent', function() {
+    console.log( '"customevent" has fired' );
+} );
+                    </code></pre>
+                </section>
+
+                <section>
+                    <section data-background="#007777">
+                        <h2>Slide Backgrounds</h2>
+                        <p>
+                            Set <code>data-background="#007777"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
+                        </p>
+                        <a href="#" class="image navigate-down">
+                            <img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
+                        </a>
+                    </section>
+                    <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png">
+                        <h2>Image Backgrounds</h2>
+                        <pre><code>&lt;section data-background="image.png"&gt;</code></pre>
+                    </section>
+                    <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" data-background-repeat="repeat" data-background-size="100px">
+                        <h2>Repeated Image Backgrounds</h2>
+                        <pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
+                    </section>
+                </section>
+
+                <section data-transition="linear" data-background="#4d7e65" data-background-transition="slide">
+                    <h2>Background Transitions</h2>
+                    <p>
+                        Pass reveal.js the <code>backgroundTransition: 'slide'</code> config argument to make backgrounds slide rather than fade.
+                    </p>
+                </section>
+
+                <section data-transition="linear" data-background="#8c4738" data-background-transition="slide">
+                    <h2>Background Transition Override</h2>
+                    <p>
+                        You can override background transitions per slide by using <code>data-background-transition="slide"</code>.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Clever Quotes</h2>
+                    <p>
+                        These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
+                        &ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
+                    </p>
+                    <blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
+                        &ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
+                        reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
+                    </blockquote>
+                </section>
+
+                <section>
+                    <h2>Pretty Code</h2>
+                    <pre><code data-trim contenteditable>
+function linkify( selector ) {
+  if( supports3DTransforms ) {
+
+    var nodes = document.querySelectorAll( selector );
+
+    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
+      var node = nodes[i];
+
+      if( !node.className ) {
+        node.className += ' roll';
+      }
+    }
+  }
+}
+                    </code></pre>
+                    <p>Courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+                </section>
+
+                <section>
+                    <h2>Intergalactic Interconnections</h2>
+                    <p>
+                        You can link between slides internally,
+                        <a href="#/2/3">like this</a>.
+                    </p>
+                </section>
+
+                <section>
+                    <section id="fragments">
+                        <h2>Fragmented Views</h2>
+                        <p>Hit the next arrow...</p>
+                        <p class="fragment">... to step through ...</p>
+                        <ol>
+                            <li class="fragment"><code>any type</code></li>
+                            <li class="fragment"><em>of view</em></li>
+                            <li class="fragment"><strong>fragments</strong></li>
+                        </ol>
+
+                        <aside class="notes">
+                            This slide has fragments which are also stepped through in the notes window.
+                        </aside>
+                    </section>
+                    <section>
+                        <h2>Fragment Styles</h2>
+                        <p>There's a few styles of fragments, like:</p>
+                        <p class="fragment grow">grow</p>
+                        <p class="fragment shrink">shrink</p>
+                        <p class="fragment roll-in">roll-in</p>
+                        <p class="fragment fade-out">fade-out</p>
+                        <p class="fragment highlight-red">highlight-red</p>
+                        <p class="fragment highlight-green">highlight-green</p>
+                        <p class="fragment highlight-blue">highlight-blue</p>
+                        <p class="fragment current-visible">current-visible</p>
+                        <p class="fragment highlight-current-blue">highlight-current-blue</p>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Spectacular image!</h2>
+                    <a class="image" href="http://lab.hakim.se/meny/" target="_blank">
+                        <img width="320" height="299" src="http://s3.amazonaws.com/hakim-static/portfolio/images/meny.png" alt="Meny">
+                    </a>
+                </section>
+
+                <section>
+                    <h2>Export to PDF</h2>
+                    <p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
+                    <iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/13872948" width="455" height="356" style="margin:0;overflow:hidden;border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe>
+                    <script>
+                        document.getElementById('slideshare').attributeName = 'allowfullscreen';
+                    </script>
+                </section>
+
+                <section>
+                    <h2>Take a Moment</h2>
+                    <p>
+                        Press b or period on your keyboard to enter the 'paused' mode. This mode is helpful when you want to take distracting slides off the screen
+                        during a presentation.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Stellar Links</h2>
+                    <ul>
+                        <li><a href="http://slid.es">Try the online editor</a></li>
+                        <li><a href="https://github.com/hakimel/reveal.js">Source code on GitHub</a></li>
+                        <li><a href="http://twitter.com/hakimel">Follow me on Twitter</a></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>THE END</h1>
+                    <h3>BY Hakim El Hattab / hakim.se</h3>
+                </section>
+
+            </div>
+!-->
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'slide', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Parallax scrolling
+                // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+                // parallaxBackgroundSize: '2100px 900px',
+
+                math: {
+                    mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js'
+                    // config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+                },
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/math/math.js', async: true }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>
