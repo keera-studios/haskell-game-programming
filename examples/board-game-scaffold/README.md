@@ -1,6 +1,6 @@
 # keera-board-game-scaffold
 
-This is a Haskell game board scaffold.
+This is a Haskell board game scaffold.
 
 Table of Contents:
   * [Installation](#installation)
