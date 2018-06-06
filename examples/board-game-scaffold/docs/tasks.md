@@ -8,10 +8,10 @@ Table of Contents:
   * [Hands on tasks (playing with the code)](#hands-on-tasks-playing-with-the-code)
   * [Hands on tasks (createing a board game)](#hands-on-tasks-creating-a-board-game)
   * [Exploring the game structure](#exploring-the-game-structure)
-  * [Haskanoid: SDL FRP (Yampa) Wiimote](#haskanoid-sdl-frp-yampa-wiimote)
+  * [Haskanoid: SDL FRP (Yampa) Wiimote](#haskanoid-sdl1-sdl2-frp-yampa-wiimote)
   * [Confused?](#confused)
 
-## Hands on tasks (playing with the code)
+## Hands on tasks (playing with the [code](https://github.com/keera-studios/haskell-game-programming/tree/zuriHac2018/examples/board-game-scaffold/src))
 ### Constants
 - Change the title of the window.
 - Change the default screen size.
@@ -56,10 +56,10 @@ Table of Contents:
 
 ## Hands on tasks (creating a board game)
 - Reimplement an existing board game (4 in a line, solitaire, find the pairs, Mensch \"argere dich nicht, ...).
-- Create your own board game (using the board game scaffold) with your own logic and rules.
+- Create your own board game (maybe using the [board game scaffold](https://github.com/keera-studios/haskell-game-programming/tree/zuriHac2018/examples/board-game-scaffold)) with your own logic and rules.
 
 ## Exploring the game structure
-- Create the haddock documentation and get an overview of the game.
+- Create the haddock documentation (see [README](https://github.com/keera-studios/haskell-game-programming/blob/zuriHac2018/examples/board-game-scaffold/README.md)) and get an overview of the game.
 - Where do you expect:
   - The handling of mouse and key board events?
   - The definition of the game board and its elements in general?
@@ -73,7 +73,8 @@ Table of Contents:
   - The definition of a valid move?
   - The result of a move?
   - The detection of clicked fields?
-- Take a look at the following import examples. Can you associate them with the specific modules of the game?
+- Read about our [basic game structure](https://github.com/keera-studios/haskell-game-programming/blob/zuriHac2018/examples/board-game-scaffold/docs/game-structure.md). Why you should read it? The document will tell you.
+- Take a look at the following import examples. Can you associate them with the specific modules of the [game](https://github.com/keera-studios/haskell-game-programming/tree/zuriHac2018/examples/board-game-scaffold/src)?
   - Example 1:
 
 ```haskell
@@ -161,13 +162,13 @@ import SDL      (EventPayload (MouseButtonEvent, MouseMotionEvent),
 -- Internal imports
 ```
 
-- Create a list for commonly used variables and abbreviations in the code. If you see irregularities you are very wellcome to fix them.
+- Create a list for commonly used variables and abbreviations in the code. If you see irregularities you are very welcome to fix them.
 - What makes it easy or hard to understand the code? If you want try to fix it and/or give us feedback regarding the difficulty of understanding our documents and our code.
 - Compare the board game scaffold with the game structure of [haskanoid](https://github.com/ivanperez-keera/haskanoid) and/or [Pang a Lambda](https://github.com/keera-studios/games-pang-a-lambda).
-- Structure [raindrops](https://github.com/keera-studios/haskell-game-programming/tree/master/examples/raindrops) using our basic game structure.
+- Structure [raindrops](https://github.com/keera-studios/haskell-game-programming/tree/master/examples/raindrops) using our [basic game structure](https://github.com/keera-studios/haskell-game-programming/blob/zuriHac2018/examples/board-game-scaffold/docs/game-structure.md).
 
-## Haskanoid: SDL FRP (Yampa) Wiimote
-- Take a look at the [issues](https://github.com/ivanperez-keera/haskanoid/issues) that we added and tagged with ZuriHac2018 of [haskanoid](https://github.com/ivanperez-keera/haskanoid) our breakout game in Haskell using SDL, functional reactive programming (Yampa) and wiimote support.
+## Haskanoid: SDL1 SDL2 FRP (Yampa) Wiimote
+- Take a look at the [issues](https://github.com/ivanperez-keera/haskanoid/issues) that we added and tagged with ZuriHac2018 of [haskanoid](https://github.com/ivanperez-keera/haskanoid) our breakout game in Haskell. It uses functional reactive programming, can be played with various input devices (mouse, wiimote, ...) and can be compiled with SDL1 or SDL2.
 
 ## Confused?
 Don't panic! Let's talk and find a solution. ;-)
