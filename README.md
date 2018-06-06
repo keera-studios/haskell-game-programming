@@ -10,7 +10,8 @@ Here are some pointers to begin with:
 * The [raindrops example](https://github.com/keera-studios/haskell-game-programming/tree/zuriHac2018/examples/raindrops) shows the use of wiimote.
 * [Haskanoid](https://github.com/ivanperez-keera/haskanoid/) is one of our android games. It uses functional reactive programming, can be played with various input devices (mouse, wiimote, ...) and can be compiled with SDL1 or SDL2. We added an [issue](https://github.com/ivanperez-keera/haskanoid/issues/67) with a list of new game features that you could work on.
 
-Confused? Something is not working? Or do you just want to talk with a haskell game programmer?
+Confused? Something is not working? Or do you just want to talk with a Haskell game programmer?
+
 Search me (Christina) and we will sort things out. ;-)
 
 ***
