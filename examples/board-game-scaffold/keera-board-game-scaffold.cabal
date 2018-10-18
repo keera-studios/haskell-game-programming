@@ -1,0 +1,40 @@
+name:                keera-board-game-scaffold
+version:             0.1.0.0
+synopsis:            A scaffold for a board game using SDL2.
+description:         A scaffold for a board game using SDL2 as a starting point
+                     and teaching source for a wide range of board games written in Haskell.
+license:             GPL-3
+license-file:        LICENSE
+author:              Christina Zeller
+maintainer:          chriz@keera.co.uk
+homepage:            https://github.com/keera-studios/haskell-game-programming/
+bug-reports:         https://github.com/keera-studios/haskell-game-programming/issues
+copyright:           2018 (c) Keera Studios Ltd
+category:            Game
+build-type:          Simple
+extra-source-files:  README.md, ChangeLog.md
+cabal-version:       >=1.10
+
+executable keera-board-game-scaffold
+  main-is:             Main.hs
+  other-modules: Constants
+                 DeviceOutput
+                 GameLogic
+                 GameState
+                 InputOutputMatch
+                 Levels
+                 Objects
+                 UserInput
+
+  build-depends:       base     >=4.9  && <4.10,
+                       sdl2     >=2.4  && <2.5,
+                       sdl2-gfx >=0.2  && <0.3,
+                       text     >=1.2  && <1.3
+
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options: -Wall
+
+source-repository head
+  type:     git
+  location: https://github.com/keera-studios/haskell-game-programming/
